@@ -18,6 +18,6 @@ export function compile(blocks) {
 }
 export function position(plan, elapsed) {
  let start=0;
- for(let i=0;i<plan.length;i++){if(elapsed<start+plan[i].duration)return {index:i,segment:plan[i],elapsed:elapsed-start,remaining:plan[i].duration-elapsed};start+=plan[i].duration;}
+ for(let i=0;i<plan.length;i++){if(elapsed<start+plan[i].duration)return {index:i,segment:plan[i],elapsed:elapsed-start,remaining:plan[i].duration-(elapsed-start)};start+=plan[i].duration;}
  return null;
 }
