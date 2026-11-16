@@ -1,4 +1,4 @@
-const CACHE = 'wod-shell-20261116-v1';
+const CACHE = 'wod-shell-20261116-v2';
 const SHELL = ['/', '/style.css', '/app.mjs', '/engine.mjs', '/telemetry.mjs', '/pwa.mjs', '/mobile.css', '/manifest.webmanifest', '/icons/wod-192.png', '/icons/wod-512.png', '/icons/wod-180.png'];
 self.addEventListener('install', event => {
   // Atomic precache: never activate an incomplete or redirected login page.

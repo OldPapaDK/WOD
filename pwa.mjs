@@ -25,12 +25,12 @@ function installHelp() {
 }
 install.onclick=async()=>{if(!installPrompt){installHelp();return;}const prompt=installPrompt;installPrompt=null;try{await prompt.prompt();const choice=await prompt.userChoice;if(choice.outcome==='accepted')install.hidden=true;}catch{installHelp();}};
 const activeWorkout=()=>Boolean($('pause')&&!$('pause').disabled);
-function updateState(){if(!registration?.waiting)return;update.hidden=false;update.disabled=activeWorkout();update.textContent=activeWorkout()?'Opdatering klar efter træning':'Opdatér app';}
+function updateState(){if(!registration?.waiting||!navigator.serviceWorker.controller){update.hidden=true;return;}update.hidden=false;update.disabled=activeWorkout();update.textContent=activeWorkout()?'Opdatering klar efter træning':'Opdatér app';}
 update.onclick=()=>{if(activeWorkout()||!registration?.waiting)return;updateRequested=true;registration.waiting.postMessage({type:'ACTIVATE_UPDATE'});};
 new MutationObserver(updateState).observe($('pause'),{attributes:true,attributeFilter:['disabled']});
 if('serviceWorker' in navigator){
- navigator.serviceWorker.addEventListener('controllerchange',()=>{if(updateRequested&&!activeWorkout())location.reload();});
- navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(reg=>{registration=reg;updateState();reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed')updateState();});});}).catch(()=>{if(navigator.onLine)status.textContent='Timer klar · offlinebrug kunne ikke klargøres. Prøv at genindlæse.';});
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{updateState();if(updateRequested&&!activeWorkout())location.reload();});
+ navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(reg=>{registration=reg;updateState();reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{updateState();});});}).catch(()=>{if(navigator.onLine)status.textContent='Timer klar · offlinebrug kunne ikke klargøres. Prøv at genindlæse.';});
 }
 // Touch navigation gives the phone its own app layout, without changing saved workouts.
 const tabs=document.createElement('nav');tabs.className='app-tabs';tabs.setAttribute('aria-label','Appnavigation');
